@@ -4,21 +4,15 @@
    Author's custom styles
    ========================================================================== */
 
-#wod-container {
+.wod-container {
 	min-height: 100px;
 }
 
+.start-hidden {
+	display: none;
+}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+.user-mgt .has-user .avatar {
+	height: 36px;
+	width: 36px;
+}

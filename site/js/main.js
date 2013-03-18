@@ -1,75 +1,125 @@
 (function(){
 	"use strict";
-	var wom = {}; // primitive namespace
+	// PRIMITIVE NAMESPACE
+	var wom = window.wom || {};
 
-	var routines, workoutId;
-	var dbUrl = 'https://workout-o-matic.firebaseio.com/';
-	var appRef = new Firebase(dbUrl);
+	// LOCAL GLOBALS
+	var wod = wom.wod;
+	console.log('WOM', wom);
 
-	var routinesRef = new Firebase(dbUrl + 'routines');
-
-	wom.Routine = Backbone.Model.extend({});
-
-	wom.RoutineList = Backbone.Firebase.Collection.extend({
-		model: wom.Routine,
-		firebase: dbUrl + 'routines'
-	});
-
-
+	var myWorkouts;
 
 	var NUM_LOOKUPS = 2;
-	var workoutTpl = '<input type="hidden" id="routineId" value="<%= id %>" />'
-		+ '<%= description %>'
-		+ '<% if (typeof source !== "undefined" && source) { %> <a href="<%= source %>" target="_blank">Source</a><% } %>';
+	var workoutTpl = '<input type="hidden" id="routineId" value="<%= id %>" />' +
+		'<%= description %>' +
+		'<% if (typeof source !== "undefined" && source) { %> <br /><a href="<%= source %>" target="_blank">Source</a><% } %>';
 	var workoutTplFn = _.template(workoutTpl);
 
+	// FUNCTIONS
 	var init = function() {
+		initControls();
+		wom.auth.init(getUserWorkouts);
 		getRoutines();
-		getUserWorkouts();
+		$('body').css('visibility', 'visible');
 	};
 
-	var getRoutines = function() {
-		routines = new wom.RoutineList();
-		routines.firebase.on('value', function(snapshot){
-			console.log('data loaded', snapshot);
-			dataLoaded();
+	var initControls = function() {
+		$('.wod-container select').change(chooseWod);
+		$('#workout-notes #save-btn').click(saveWorkout);
+	};
+
+	var chooseWod = function(event) {
+		var wodId = $(this).val();
+		displayWod(wodId);
+	};
+
+	var saveWorkout = function(event) {
+		if (event) event.preventDefault();
+		var w = new wom.Workout({
+			routineId: wod.id,
+			duration: $('#duration').val(),
+			endingHeartRate: $('#ending-heart-rate').val(),
+			notes: $('#notes').val(),
+			difficulty: $('#difficulty').val()// ($('#difficulty').val() === 'null') ? '' : $('#difficulty').val()
 		});
 
-		// routines.on('changed', dataLoaded);
-		console.log(routines);
-		window.routines = routines;
-		// routinesRef.on('value', function(snapshot){
-		// 	routines = snapshot.val();
-		// 	dataLoaded();
-		// });
+		console.log('Workout', w);
+		wom.user.get('workouts').add(w.toJSON());
+		var view = new wom.HistoryRow({model: w}).render();
+
+		// clear form
+		$('#duration').val('');
+		$('#ending-heart-rate').val('');
+		$('#notes').val('');
+		$('#difficulty').val('');
+
+		return w;
+	};
+	window.saveWorkout = saveWorkout; // TODO remove
+
+	var getRoutines = function() {
+		wom.routines = new wom.RoutineList();
+		wom.routines.firebase.once('value', function(snapshot){
+			console.log('routines loaded', snapshot);
+			dataLoaded();
+		});
 	};
 
 	var getUserWorkouts = function() {
-		dataLoaded();
+		var workouts = wom.user.get('workouts');
+		workouts.firebase.once('value', function(snapshot){
+			workouts.each(function(item, i){
+				var view = new wom.HistoryRow({model: item});
+				view.render();
+			});
+			dataLoaded();
+		});
 	};
 
 	var dataLoaded = function() {
-		console.log('in dataLoaded', NUM_LOOKUPS, 'routines.length:', routines.length);
+		console.log('in dataLoaded', NUM_LOOKUPS, 'wom.routines.length:', (wom.routines && wom.routines.length));
 		NUM_LOOKUPS--;
 		if (NUM_LOOKUPS === 0) { afterDataLoaded(); }
 	};
 
 	var afterDataLoaded = function() {
-		workoutId = getWorkoutId();
-		var wod = routines.get(workoutId).toJSON();
-		console.log('WORKOUT:', wod);
-		$('#wod-spinner').hide();
-		$('#wod').html(workoutTplFn(wod));
+		var $sel = $('.wod-container select');
+		wom.routines.each(function(rout){
+			var $option = $('<option />').val(rout.get('id')).text(rout.get('title'));
+			$sel.append($option);
+		});
+
+		wod = getWod();
+		wom.wod = wod;
+		console.log('WORKOUT:', (wod && wod.toJSON()));
+
+		if (wod) {
+			$sel.val(wod.get('id'));
+			displayWod(wod);
+		}
+
+		$('.hide-on-data').hide();
+		$('.show-on-data').removeClass('start-hidden');
 	};
 
-	var getWorkoutId = function() {
-		var keys = routines.pluck('id');
-		var filteredKeys = _(keys).filter(function(key){
-			var item = routines.get(key);
+	var displayWod = function(wod) {
+		if (typeof wod === 'string') {
+			wod = wom.routines.get(wod);
+		}
+		if (wod) {
+			$('#wod').html(workoutTplFn(wod.toJSON()));
+		} else {
+			console.warn('Unable to put workout in page.', wod);
+		}
+	};
+
+	var getWod = function() {
+		var filtered = wom.routines.filter(function(item){
 			return !item.get('run') && item.get('type') !== 'Flexibility';
 		});
-		var index = Math.floor(Math.random()*filteredKeys.length);
-		return filteredKeys[index];
+		var index = Math.floor(Math.random()*filtered.length);
+		var selected = filtered[index];
+		return selected;
 	};
 
 	$(init);
