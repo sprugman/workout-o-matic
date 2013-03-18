@@ -49,8 +49,15 @@ wom.auth = (function(){
 		}
 	};
 
+	var logout = function() {
+		authClient.logout();
+		wom.user = null;
+		toggleUserStuff();
+	};
+
 
 	return {
-		init: init
+		init: init,
+		logout: logout
 	};
 })();
