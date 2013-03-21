@@ -1,21 +1,9 @@
-/*
-var connect = require('connect');
-connect.createServer(
-    connect.static(__dirname)
-).listen(3000);
-*/
-/*
-var http = require('http');
-var send = require('send');
-
-var app = http.createServer(function(req, res){
-  send(req, req.url).pipe(res);
-}).listen(3000);
-*/
-
 var http = require('http');
 var send = require('send');
 var url = require('url');
+
+var dir = './site';
+var port = 4000;
 
 var app = http.createServer(function(req, res){
   // your custom error-handling logic:
@@ -34,8 +22,9 @@ var app = http.createServer(function(req, res){
   // transfer arbitrary files from within
   // /www/example.com/public/*
   send(req, url.parse(req.url).pathname)
-  .root('./site')
+  .root(dir)
   .on('error', error)
   .on('directory', redirect)
   .pipe(res);
-}).listen(4000);
+}).listen(port);
+console.log('\nListening to ' + dir + ' at http://localhost:' + port + '...');

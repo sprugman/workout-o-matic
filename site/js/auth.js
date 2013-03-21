@@ -9,9 +9,9 @@ wom.auth = (function(){
 	var user = wom.user;
 
 	var init = function(cb) {
+		loginCallback = cb;
 		$('.user-mgt button').click(doLogin);
 		authClient = new FirebaseAuthClient(appRef, processLogin);
-		loginCallback = cb;
 	};
 
 	var doLogin = function(event) {

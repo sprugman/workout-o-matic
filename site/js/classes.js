@@ -57,7 +57,10 @@
 			difficulty: null
 		},
 		initialize: function(attributes, options) {
-			if (!attributes.datetime) this.set('datetime', new Date().toUTCString());
+			if (!attributes.datetime) {
+				console.warn('no attr.date', attributes, options);
+				this.set('datetime', new Date().toUTCString());
+			}
 		},
 		validate: function(attributes, options) {
 			var result;

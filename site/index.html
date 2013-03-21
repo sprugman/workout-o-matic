@@ -86,41 +86,54 @@
 						<select></select>
 						<div id="wod"></div>
 
-
-
+						<script type="x-tpl" id="wod-tpl">
+							<input type="hidden" id="routineId" value="<%= id %>" />
+							<%= description %>
+							<% if (typeof source !== "undefined" && source) { %> 
+								<br /><a href="<%= source %>" target="_blank">Source</a>
+							<% } %>
+						</script>
 
 
 
 						<img src="img/spinner.gif" id="wod-spinner" class="hide-on-data" />
 					</div>
-					<!--
-					<div id="controls">
+					
+					<div id="controls" class="start-hidden has-user">
 						<button id="start-btn">Start</button>
-						<button id="pause-btn">Pause</button>
-						<button id="end-btn">End</button>
+						<div id="in-progress" class="start-hidden">
+							<!--
+							<button id="pause-btn">Pause</button>
+							-->
+							<button id="end-btn">End</button>
+							<span id="timer"></span>
+						</div>
 					</div>
-					-->
-					<form id="workout-notes">
-						<label>Difficulty:</label>
-						<select id="difficulty">
-						  <option value="" selected="selected">Choose...</option>
-						  <option value="Too Easy">Too Easy</option>
-						  <option value="Easy">Easy</option>
-						  <option value="Just Right">Just Right</option>
-						  <option value="Hard">Hard</option>
-						  <option value="Too Hard">Too Hard</option>
-						</select>
 
-						<label>Duration:</label>
-						<input id="duration" maxlength="6" placeholder="m:s"  />
 
-						<label>Ending Heart Rate:</label>
-						<input id="ending-heart-rate" maxlength="3" placeholder="bpm"  />
+					<form id="workout-notes" class="start-hidden">
+						<h3>How was it?</h3>
 
 						<label>Notes:</label> 
 						<input id="notes" />
 
-						<button id="save-btn" class="btn">Save</button>
+						<label>Difficulty:</label>
+						<select id="difficulty">
+							<option value="" selected="selected">Choose...</option>
+							<option value="Too Easy">Too Easy</option>
+							<option value="Easy">Easy</option>
+							<option value="Just Right">Just Right</option>
+							<option value="Hard">Hard</option>
+							<option value="Too Hard">Too Hard</option>
+						</select>
+
+						<label>Ending Heart Rate:</label>
+						<input id="ending-heart-rate" maxlength="3" placeholder="bpm"  />
+
+						<label>Duration:</label>
+						<input id="duration" maxlength="6" placeholder="m:s"  />
+
+						<div><button id="save-btn" class="btn">Save</button></div>
 					</form>
 
 				</div>
@@ -192,6 +205,7 @@
 		<script src="js/vendor/date.js" type='text/javascript'></script>
 
 		<script src='js/data-tines.js'></script>
+		<script src='js/data-history.js'></script>
 		<script src='https://cdn.firebase.com/v0/firebase.js'></script>
 		<script src='https://cdn.firebase.com/v0/firebase-auth-client.js' type='text/javascript'></script>
 		<script src="js/vendor/backfire/backbone-firebase.js" type='text/javascript'></script>

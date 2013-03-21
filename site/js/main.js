@@ -7,12 +7,8 @@
 	var wod = wom.wod;
 	console.log('WOM', wom);
 
-	var myWorkouts;
-
 	var NUM_LOOKUPS = 2;
-	var workoutTpl = '<input type="hidden" id="routineId" value="<%= id %>" />' +
-		'<%= description %>' +
-		'<% if (typeof source !== "undefined" && source) { %> <br /><a href="<%= source %>" target="_blank">Source</a><% } %>';
+	var workoutTpl = $('#wod-tpl').text();
 	var workoutTplFn = _.template(workoutTpl);
 
 	// FUNCTIONS
@@ -26,6 +22,8 @@
 	var initControls = function() {
 		$('.wod-container select').change(chooseWod);
 		$('#workout-notes #save-btn').click(saveWorkout);
+		$('#start-btn').click(startWorkout);
+		$('#end-btn').click(endWorkout);
 	};
 
 	var chooseWod = function(event) {
@@ -47,15 +45,49 @@
 		wom.user.get('workouts').add(w.toJSON());
 		var view = new wom.HistoryRow({model: w}).render();
 
+		reset();
+		return w;
+	};
+
+	var startTime, timerInterval;
+	var startWorkout = function() {
+		startTime = new Date();
+		timerInterval = setInterval(function(){
+			var time = new Date() - startTime;
+			$('#timer').text(formatTime(time));
+		}, 1000);
+		$('#start-btn').hide();
+		$('#in-progress').show();
+	};
+
+	var reset = function() {
 		// clear form
 		$('#duration').val('');
 		$('#ending-heart-rate').val('');
 		$('#notes').val('');
 		$('#difficulty').val('');
 
-		return w;
+		$('#controls').show();
+		$('#workout-notes').hide();
+		$('#start-btn').show();
+		$('#in-progress').hide();
 	};
-	window.saveWorkout = saveWorkout; // TODO remove
+
+	var endWorkout = function() {
+		clearInterval(timerInterval);
+		var duration = new Date() - startTime;
+		$('#duration').val(formatTime(duration));
+		$('#controls').hide();
+		$('#workout-notes').show();
+	};
+
+	var formatTime = function(ms) {
+		var s = Math.floor(ms/1000)%60;
+		var m = Math.floor(ms/1000/60)%60;
+		var h = Math.floor(ms/1000/60/60)%60;
+		return h + 'h ' + m + 'm ' + s + 's';
+	};
+
 
 	var getRoutines = function() {
 		wom.routines = new wom.RoutineList();
@@ -66,14 +98,18 @@
 	};
 
 	var getUserWorkouts = function() {
-		var workouts = wom.user.get('workouts');
-		workouts.firebase.once('value', function(snapshot){
-			workouts.each(function(item, i){
-				var view = new wom.HistoryRow({model: item});
-				view.render();
-			});
+		if (!wom.user) {
 			dataLoaded();
-		});
+		} else {
+			var workouts = wom.user.get('workouts');
+			workouts.firebase.once('value', function(snapshot){
+				workouts.each(function(item, i){
+					var view = new wom.HistoryRow({model: item});
+					view.render();
+				});
+				dataLoaded();
+			});
+		}
 	};
 
 	var dataLoaded = function() {
@@ -121,6 +157,40 @@
 		var selected = filtered[index];
 		return selected;
 	};
+
+	window.addHistory = function() {
+		var workouts = wom.user.get('workouts');
+		_(dataHist).each(function(item, i) {
+			var title = item.activity;
+			var description = '';
+			if (title.indexOf('Yoga Journal: ') !== 0) {
+				var parts = item.activity.split(': ');
+				title = parts[0];
+				description = parts[1];
+			}
+
+			console.log(i, title);
+
+			var exclude = ['--'];
+			if (_(exclude).indexOf(title) === -1) {
+				var searchResult = wom.routines.where({title : title});
+				if (searchResult.length) {
+					// console.log(searchResult[0].id, searchResult.length);
+					var r = searchResult[0];
+					var obj = {
+						routineId: r.id,
+						datetime: Date.parse(item.date).toUTCString(),
+						notes: item.notes
+					};
+					console.log(obj)
+					workouts.add(obj);
+
+				} else {
+					console.warn('no routine found');
+				}
+			}
+		});
+	}
 
 	$(init);
 })();
