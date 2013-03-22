@@ -36,6 +36,7 @@ wom.auth = (function(){
 		}
 		wom.user = user;
 		toggleUserStuff();
+		$('.show-on-auth').show('slow');
 		if (loginCallback) loginCallback(user);
 	};
 

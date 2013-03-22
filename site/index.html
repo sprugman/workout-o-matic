@@ -29,7 +29,7 @@
 
 		<!-- This code is taken from http://twitter.github.com/bootstrap/examples/hero.html -->
 
-		<div class="navbar navbar-inverse navbar-fixed-top">
+		<header class="navbar navbar-inverse navbar-fixed-top">
 			<div class="navbar-inner">
 				<div class="container">
 					<a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
@@ -64,122 +64,144 @@
 					</div><!--/.nav-collapse -->
 				</div>
 			</div>
-		</div>
+		</header>
+
+
+
+
 
 		<div class="container">
 
-			<div class="row">
-				<div class="span12 user-mgt">
-					<i class="icon-user"></i>
-					<span class="user-auth no-user">Logged out. Login with: <button class="btn btn-link">Twitter</button></span>
-					<span class="user-auth has-user">Logged in as</span>
-				</div>
-			</div>
-
-			<!-- Main hero unit for a primary marketing message or call to action -->
-			<div class="hero-unit">
-				<div id="todays-workout">
-					<h2>Today's Workout:</h2>
-					<div class="wod-container">
-
-
-						<select></select>
-						<div id="wod"></div>
-
-						<script type="x-tpl" id="wod-tpl">
-							<input type="hidden" id="routineId" value="<%= id %>" />
-							<%= description %>
-							<% if (typeof source !== "undefined" && source) { %> 
-								<br /><a href="<%= source %>" target="_blank">Source</a>
-							<% } %>
-						</script>
 
 
 
-						<img src="img/spinner.gif" id="wod-spinner" class="hide-on-data" />
-					</div>
-					
-					<div id="controls" class="start-hidden has-user">
-						<button id="start-btn">Start</button>
-						<div id="in-progress" class="start-hidden">
-							<!--
-							<button id="pause-btn">Pause</button>
-							-->
-							<button id="end-btn">End</button>
-							<span id="timer"></span>
-						</div>
-					</div>
-
-
-					<form id="workout-notes" class="start-hidden">
-						<h3>How was it?</h3>
-
-						<label>Notes:</label> 
-						<input id="notes" />
-
-						<label>Difficulty:</label>
-						<select id="difficulty">
-							<option value="" selected="selected">Choose...</option>
-							<option value="Too Easy">Too Easy</option>
-							<option value="Easy">Easy</option>
-							<option value="Just Right">Just Right</option>
-							<option value="Hard">Hard</option>
-							<option value="Too Hard">Too Hard</option>
-						</select>
-
-						<label>Ending Heart Rate:</label>
-						<input id="ending-heart-rate" maxlength="3" placeholder="bpm"  />
-
-						<label>Duration:</label>
-						<input id="duration" maxlength="6" placeholder="m:s"  />
-
-						<div><button id="save-btn" class="btn">Save</button></div>
-					</form>
-
-				</div>
-			</div>
+			<section id="user-auth" class="start-hidden show-on-auth user-mgt">
+				<i class="icon-user user-auth no-user"></i>
+				<span class="user-auth no-user">Logged out. Login with: <button class="btn btn-link">Twitter</button></span>
+				<span class="user-auth has-user">Logged in as</span>
+			</section>
 
 
 
 
 
 
+			<section id="todays-workout">
+				<h2>Today&rsquo;s Workout</h2>
+				<div class="wod-container">
 
 
+					<div  class="start-hidden show-on-data"><select></select> <i class="icon-repeat" title="pick again"></i></div>
+					<div id="wod"></div>
 
-
-
-
-			<div class="row user-auth has-user">
-
-				<div class="span12" id="workout-history">
-					<h2>History</h2>
-					<table class="history-table table table-striped">
-						<thead>
-							<tr>
-								<th>date</th>
-								<th>title</th>
-								<th>duration</th>
-								<th>heart rate</th>
-								<th>difficulty</th>
-								<th>notes</th>
-							</tr>
-						</thead>
-						<tbody></tbody>
-					</table>
-					<script type="x-tpl" id="history-item-tpl">
-						<tr>
-							<td><%= date %></td>
-							<td title="<%= description %>"><%= title %></td>
-							<td><%= duration %></td>
-							<td><%= endingHeartRate %></td>
-							<td><%= difficulty %></td>
-							<td><%= notes %></td>
-						</tr>
+					<script type="x-tpl" id="wod-tpl">
+						<input type="hidden" id="routineId" value="<%= id %>" />
+						<%= description %>
+						<% if (typeof source !== "undefined" && source) { %> 
+							<br /><a href="<%= source %>" target="_blank">Source</a>
+						<% } %>
 					</script>
-				</div>
-			</div>
 
+
+
+					<img src="img/spinner.gif" id="wod-spinner" class="hide-on-data" />
+				</div>
+				
+				<div id="controls" class="start-hidden has-user">
+					<button id="start-btn" class="btn-success">Start</button>
+					<div id="in-progress" class="start-hidden">
+						<!--
+						<button id="pause-btn">Pause</button>
+						-->
+						<button id="end-btn" class="btn-danger">End</button>
+						<span id="timer"></span>
+					</div>
+				</div>
+
+
+				<form id="workout-notes" class="start-hidden">
+					<h3>How was it?</h3>
+
+					<label>Notes</label> 
+					<input id="notes" />
+
+					<label>Difficulty</label>
+					<select id="difficulty">
+						<option value="" selected="selected">Choose...</option>
+						<option value="Too Easy">Too Easy</option>
+						<option value="Easy">Easy</option>
+						<option value="Just Right">Just Right</option>
+						<option value="Hard">Hard</option>
+						<option value="Too Hard">Too Hard</option>
+					</select>
+
+					<label>Ending Heart Rate</label>
+					<input id="ending-heart-rate" maxlength="3" placeholder="bpm"  />
+
+					<label>Duration</label>
+					<input id="duration" maxlength="6" placeholder="m:s"  />
+
+					<div><button id="save-btn" class="btn btn-primary">Save</button></div>
+				</form>
+
+			</section>
+
+
+
+
+
+
+
+
+
+
+
+
+			<section class="row user-auth has-user" id="workout-history">
+				<h2>History</h2>
+				<table class="history-table table table-striped">
+					<thead>
+						<tr>
+							<th>date</th>
+							<th>title</th>
+							<th>duration</th>
+							<th>heart rate</th>
+							<th>difficulty</th>
+							<th>notes</th>
+						</tr>
+					</thead>
+					<tbody></tbody>
+				</table>
+				<script type="x-tpl" id="history-item-tpl">
+					<tr>
+						<td><%= date %></td>
+						<td title="<%= description %>"><%= title %></td>
+						<td><%= duration %></td>
+						<td><%= endingHeartRate %></td>
+						<td><%= difficulty %></td>
+						<td><%= notes %></td>
+					</tr>
+				</script>
+			</section>
+
+			<section id="add-routine" class="start-hidden user-auth has-user">
+				<h2>Add a Routine</h2>
+				<form id="routineForm">
+					<label>Title</label>
+					<input class="title" placeholder="required" />
+
+					<label>Description</label>
+					<textarea class="description"></textarea>
+
+					<label>Source</label>
+					<input class="source" placeholder="url" />
+
+					<label><input class="run" type="checkbox" /> Run</label>
+					<label><input class="flexibility" type="checkbox" /> Flexibility</label>
+
+					<div><button type="submit" class="save-btn btn btn-primary">Save</button></div>
+				</form>
+			</section>
 
 
 

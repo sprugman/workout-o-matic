@@ -10,7 +10,8 @@
 			run: false,
 			title: '',
 			description: '',
-			source: ''
+			source: '',
+			type: ''
 		},
 		validate: function(attributes, options) {
 			var result;
@@ -84,18 +85,22 @@
 		render: function(){
 			// lookup the associated routine via model.routineId
 			var routine = wom.routines.get(this.model.get('routineId'));
+			if (!routine) {
+				console.error('Can not find routine to match workout:');
+				console.log(this.model.toJSON())
+			} else {
+				// data adjustments
+				var date = Date.parse(this.model.get('datetime')).toString('M/d H:mm');
 
-			// data adjustments
-			var date = Date.parse(this.model.get('datetime')).toString('M/d H:mm');
+				// populate a object for our template
+				var viewObj = this.model.attributes; // this.model should be a wom.Workout object
 
-			// populate a object for our template
-			var viewObj = this.model.attributes; // this.model should be a wom.Workout object
-
-			// add other values
-			viewObj.date = date;
-			viewObj.title = routine.get('title');
-			viewObj.description = routine.get('description');
-			$('.history-table tbody').prepend(this.template(viewObj));
+				// add other values
+				viewObj.date = date;
+				viewObj.title = routine.get('title');
+				viewObj.description = routine.get('description');
+				$('.history-table tbody').prepend(this.template(viewObj));
+			}
 		}
 	});
 
