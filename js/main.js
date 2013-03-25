@@ -4,7 +4,6 @@
 	var wom = window.wom || {};
 
 	// LOCAL GLOBALS
-	var wod = wom.wod;
 	console.log('WOM', wom);
 
 	var NUM_LOOKUPS = 2;
@@ -21,20 +20,23 @@
 
 	var initControls = function() {
 		$('.wod-container select').change(chooseWod);
+		$('.wod-container .icon-repeat').click(chooseRandomWod);
 		$('#workout-notes #save-btn').click(saveWorkout);
 		$('#start-btn').click(startWorkout);
 		$('#end-btn').click(endWorkout);
+		$('#routineForm').submit(saveRoutine);
 	};
 
 	var chooseWod = function(event) {
 		var wodId = $(this).val();
-		displayWod(wodId);
+		wom.chosen = wom.routines.get(wodId);
+		displayWod();
 	};
 
 	var saveWorkout = function(event) {
 		if (event) event.preventDefault();
 		var w = new wom.Workout({
-			routineId: wod.id,
+			routineId: wom.chosen.get('id'),
 			duration: $('#duration').val(),
 			endingHeartRate: $('#ending-heart-rate').val(),
 			notes: $('#notes').val(),
@@ -45,9 +47,23 @@
 		wom.user.get('workouts').add(w.toJSON());
 		var view = new wom.HistoryRow({model: w}).render();
 
-		reset();
+		resetWorkout();
 		return w;
 	};
+
+	var saveRoutine = function(event) {
+		if (event) event.preventDefault();
+		var $form = $('#routineForm');
+		var r = new wom.Routine({
+			title: $('.title', $form).val(),
+			description: $('.description', $form).val(),
+			source: $('.source', $form).val(),
+			run: $('.run', $form).is(':checked'),
+			type: ($('.flexibility', $form).is(':checked')) ? 'Flexibility' : ''
+		});
+
+		wom.routines.add(r.toJSON());
+	}
 
 	var startTime, timerInterval;
 	var startWorkout = function() {
@@ -60,7 +76,7 @@
 		$('#in-progress').show();
 	};
 
-	var reset = function() {
+	var resetWorkout = function() {
 		// clear form
 		$('#duration').val('');
 		$('#ending-heart-rate').val('');
@@ -125,27 +141,25 @@
 			$sel.append($option);
 		});
 
-		wod = getWod();
-		wom.wod = wod;
-		console.log('WORKOUT:', (wod && wod.toJSON()));
+		chooseRandomWod();
 
-		if (wod) {
-			$sel.val(wod.get('id'));
-			displayWod(wod);
-		}
-
-		$('.hide-on-data').hide();
-		$('.show-on-data').removeClass('start-hidden');
+		$('.hide-on-data').hide('fast');
+		$('.show-on-data').show('fast');
 	};
 
-	var displayWod = function(wod) {
-		if (typeof wod === 'string') {
-			wod = wom.routines.get(wod);
+	var chooseRandomWod = function() {
+		wom.chosen = getWod();
+		if (wom.chosen) {
+			$('.wod-container select').val(wom.chosen.get('id'));
+			displayWod();
 		}
-		if (wod) {
-			$('#wod').html(workoutTplFn(wod.toJSON()));
+	};
+
+	var displayWod = function() {
+		if (wom.chosen) {
+			$('#wod').html(workoutTplFn(wom.chosen.toJSON()));
 		} else {
-			console.warn('Unable to put workout in page.', wod);
+			console.warn('Unable to put workout in page.', wom.chosen);
 		}
 	};
 

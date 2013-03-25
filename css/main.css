@@ -4,8 +4,10 @@
    Author's custom styles
    ========================================================================== */
 
-.wod-container {
-	min-height: 100px;
+section:not(:first-of-type) {
+	margin-top: 1em;
+	padding-top: 1em;
+	border-top: 1px dotted #ccc;
 }
 
 .start-hidden {
