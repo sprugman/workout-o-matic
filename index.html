@@ -164,35 +164,21 @@
 						<tr>
 							<th>date</th>
 							<th>title</th>
-							<th>duration</th>
-							<th>heart rate</th>
-							<th>difficulty</th>
-						</tr>
-						<tr>
-							<th colspan="5">notes</th>
+							<th>notes</th>
 						</tr>
 					</thead>
 					<tbody></tbody>
 				</table>
-				<script type="x-tpl" id="history-item-tpl2">
-					<tr>
-						<td><%= date %></td>
-						<td title="<%= description %>"><%= title %></td>
-						<td><%= duration %></td>
-						<td><%= endingHeartRate %></td>
-						<td><%= difficulty %></td>
-						<td><%= notes %></td>
-					</tr>
-				</script>
 				<script type="x-tpl" id="history-item-tpl">
 					<tr>
 						<td><%= date %></td>
 						<td title="<%= description %>"><%= title %></td>
-						<td><%= duration %></td>
-						<td><%= endingHeartRate %></td>
-						<td><%= difficulty %></td>
-					</tr><tr>
-						<td colspan="5"><%= notes %></td>
+						<td>
+							<% if (difficulty) { print('Difficulty: ' + difficulty.toLowerCase() + '. ') } %>
+							<% if (notes) { print(notes) } %>
+							<% if (endingHeartRate) { print(endingHeartRate + ' bpm.') } %>
+							<% if (duration) { print('Duration: ' + duration + '. ') } %>
+						</td>
 					</tr>
 				</script>
 			</section>
