@@ -90,7 +90,14 @@
 				console.log(this.model.toJSON())
 			} else {
 				// data adjustments
-				var date = Date.parse(this.model.get('datetime')).toString('M/d H:mm');
+				var date;
+				var dt = this.model.get('datetime');
+				try{
+					date = Date.parse(dt).toString('M/d H:mm');
+				} catch(e) {
+					date = dt;
+					console.error('error parsing date', dt, e);
+				}
 
 				// populate a object for our template
 				var viewObj = this.model.attributes; // this.model should be a wom.Workout object

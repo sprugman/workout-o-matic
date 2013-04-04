@@ -1,9 +1,9 @@
+var dir = './site';
+var port = 4000;
+
 var http = require('http');
 var send = require('send');
 var url = require('url');
-
-var dir = './site';
-var port = 4000;
 
 var app = http.createServer(function(req, res){
   // your custom error-handling logic:
@@ -27,4 +27,12 @@ var app = http.createServer(function(req, res){
   .on('directory', redirect)
   .pipe(res);
 }).listen(port);
+
+/*
+var connect = require('connect');
+connect.createServer(
+    connect.static(__dirname)
+).listen(port);
+*/
+
 console.log('\nListening to ' + dir + ' at http://localhost:' + port + '...');
