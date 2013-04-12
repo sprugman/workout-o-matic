@@ -63,7 +63,14 @@
 		});
 
 		wom.routines.add(r.toJSON());
-	}
+
+		// clear form
+		$('.title', $form).val('');
+		$('.description', $form).val('');
+		$('.source', $form).val('');
+		$('.run', $form).attr('checked', false);
+		$('.flexibility', $form).attr('checked', false);
+	};
 
 	var startTime, timerInterval;
 	var startWorkout = function() {

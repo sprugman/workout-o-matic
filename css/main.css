@@ -1,14 +1,9 @@
-
-
-/* ==========================================================================
-   Author's custom styles
-   ========================================================================== */
-
-section:not(:first-of-type) {
-	margin-top: 1em;
+body > .container > section {
+	padding-top: 80px;
+/*	margin-top: 1em;
 	padding-top: 1em;
 	border-top: 1px dotted #ccc;
-}
+*/}
 
 .start-hidden {
 	display: none;
@@ -17,4 +12,24 @@ section:not(:first-of-type) {
 .user-mgt .has-user .avatar {
 	height: 36px;
 	width: 36px;
+}
+
+
+
+
+/* reinstate position:fixed for responsive */
+@media (max-width: 979px) {
+	.navbar-fixed-top, .navbar-fixed-bottom {
+		position: fixed;
+	}
+	body {
+		padding-top: 60px;
+	}
+}
+
+@media (max-width: 767px) {
+	.navbar-fixed-top, .navbar-fixed-bottom, .navbar-static-top {
+		margin-right: 0;
+		margin-left: 0;
+	}
 }
